@@ -48,15 +48,23 @@ if [ ! -f ".env" ]; then
 fi
 
 if command -v docker >/dev/null 2>&1; then
+    DOCKER_CMD="docker"
+    # Auto-detectar si el usuario actual requiere sudo para interactuar con el socket de Docker en Ubuntu
+    if ! docker ps >/dev/null 2>&1 && command -v sudo >/dev/null 2>&1; then
+        if sudo docker ps >/dev/null 2>&1; then
+            DOCKER_CMD="sudo docker"
+        fi
+    fi
+
     # Verificar red 'infra'
-    if ! docker network inspect infra >/dev/null 2>&1; then
+    if ! $DOCKER_CMD network inspect infra >/dev/null 2>&1; then
         echo "🌐 Creando red de Docker 'infra'..."
-        docker network create infra
+        $DOCKER_CMD network create infra
     fi
 
     # 5. Reconstruir e iniciar servicios
     echo "🐳 [4/4] Reconstruyendo y levantando servicios con compose.yaml..."
-    docker compose up -d --build
+    $DOCKER_CMD compose up -d --build
     echo "✅ Servicios desplegados y actualizados correctamente."
 else
     echo "ℹ️  Docker no está disponible en este entorno. Se omitió la reconstrucción de contenedores."
