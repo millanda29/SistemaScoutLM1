@@ -7,6 +7,9 @@ using ScoutAsset.Server.Infrastructure;
 using ScoutAsset.Server.Infrastructure.Persistence;
 using System.Text.Json.Serialization;
 
+// Cargar variables de entorno desde archivo .env local si existe
+DotEnv.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
@@ -103,3 +106,68 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+public static class DotEnv
+{
+    public static void Load()
+    {
+        var candidates = new List<string?>
+        {
+            Directory.GetCurrentDirectory(),
+            AppDomain.CurrentDomain.BaseDirectory
+        };
+
+        foreach (var startDir in candidates)
+        {
+            if (string.IsNullOrEmpty(startDir)) continue;
+
+            var dir = new DirectoryInfo(startDir);
+            while (dir != null)
+            {
+                var envPath = Path.Combine(dir.FullName, ".env");
+                if (File.Exists(envPath))
+                {
+                    Console.WriteLine($"[Config] Archivo .env cargado exitosamente desde: {envPath}");
+                    LoadFile(envPath);
+                    return;
+                }
+                dir = dir.Parent;
+            }
+        }
+    }
+
+    private static void LoadFile(string filePath)
+    {
+        foreach (var rawLine in File.ReadAllLines(filePath))
+        {
+            var line = rawLine.Trim();
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+                continue;
+
+            var equalsIndex = line.IndexOf('=');
+            if (equalsIndex <= 0)
+                continue;
+
+            var key = line[..equalsIndex].Trim();
+            var value = line[(equalsIndex + 1)..].Trim();
+
+            if (value.Length >= 2 && ((value.StartsWith('"') && value.EndsWith('"')) || (value.StartsWith('\'') && value.EndsWith('\''))))
+            {
+                value = value[1..^1];
+            }
+
+            // Establecer en el entorno del proceso actual
+            Environment.SetEnvironmentVariable(key, value);
+
+            // Mapear compatibilidad entre ':' y '__' para configuración .NET
+            if (key.Contains("__"))
+            {
+                Environment.SetEnvironmentVariable(key.Replace("__", ":"), value);
+            }
+            else if (key.Contains(':'))
+            {
+                Environment.SetEnvironmentVariable(key.Replace(":", "__"), value);
+            }
+        }
+    }
+}
