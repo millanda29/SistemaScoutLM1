@@ -1,0 +1,481 @@
+/* ==================== LAYOUT DE DASHBOARD ==================== */
+.dashboard-container {
+  padding: 24px;
+  animation: fadeIn 0.4s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== SECCIÓN DE BIENVENIDA ==================== */
+.welcome-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: linear-gradient(135deg, rgba(124, 77, 255, 0.05) 0%, rgba(224, 64, 251, 0.02) 100%);
+  padding: 28px 32px;
+  border-radius: 24px;
+  border: 1px solid rgba(124, 77, 255, 0.08);
+}
+
+.welcome-info h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #12053d;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.welcome-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(124, 77, 255, 0.08);
+  color: #512da8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+.scout-brand-badge {
+  text-align: right;
+  background: #ffffff;
+  padding: 12px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(124, 77, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(124, 77, 255, 0.03);
+}
+
+.scout-brand-badge span {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #12053d;
+}
+
+.scout-brand-badge small {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #7f74a5;
+  letter-spacing: 0.5px;
+}
+
+/* ==================== TARJETAS DE MÉTRICAS (GRID) ==================== */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.metric-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+  border-left: 4px solid transparent !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.015), 0 10px 30px rgba(124, 77, 255, 0.02) !important;
+  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.25s ease !important;
+  cursor: default;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(124, 77, 255, 0.08) !important;
+}
+
+.card-decor-blob {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--card-color);
+  opacity: 0.05;
+  filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.metric-card:hover .card-decor-blob {
+  transform: scale(1.3);
+}
+
+.metric-card-content {
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  gap: 20px;
+}
+
+.icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--card-color-light, rgba(124, 77, 255, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.metric-card:hover .icon-wrapper {
+  transform: scale(1.08) rotate(3deg);
+}
+
+.icon-wrapper mat-icon {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+  color: var(--card-color);
+}
+
+.text-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #12053d;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.metric-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #7f74a5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* ==================== SECCIÓN DE DETALLE / CONTENIDO ==================== */
+.dashboard-details-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-details-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Panel general de cartas */
+.info-panel-card {
+  border-radius: 24px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 10px 30px rgba(124, 77, 255, 0.02) !important;
+  padding: 24px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(124, 77, 255, 0.08);
+}
+
+.panel-header h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #12053d;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-header h3 mat-icon {
+  color: #7c4dff;
+}
+
+/* Widget de disponibilidad circular */
+.availability-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 16px 0;
+}
+
+.circular-chart-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.circular-chart {
+  width: 100%;
+  height: 100%;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #ece9ff;
+  stroke-width: 2.8;
+}
+
+.circle {
+  fill: none;
+  stroke: #7c4dff;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.8s ease-in-out;
+}
+
+.percentage-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+}
+
+.percentage-text .number {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #12053d;
+}
+
+.percentage-text .label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #7f74a5;
+  text-transform: uppercase;
+}
+
+.availability-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.availability-info p {
+  font-size: 0.88rem;
+  color: #584c7e;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.availability-info strong {
+  color: #12053d;
+}
+
+/* Lista de novedades */
+.novedades-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.novedad-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: #fdfcff;
+  border: 1px solid rgba(124, 77, 255, 0.05);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.novedad-item:hover {
+  transform: translateX(4px);
+  background: #faf9ff;
+  border-color: rgba(124, 77, 255, 0.12);
+}
+
+.novedad-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dot-color);
+  box-shadow: 0 0 10px var(--dot-color);
+  flex-shrink: 0;
+}
+
+.novedad-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.novedad-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #12053d;
+}
+
+.novedad-desc {
+  font-size: 0.78rem;
+  color: #7f74a5;
+  margin-top: 2px;
+}
+
+.novedad-count-badge {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--dot-color);
+  background: var(--dot-color-light);
+  padding: 4px 10px;
+  border-radius: 10px;
+  min-width: 32px;
+  text-align: center;
+}
+
+/* Panel de acciones rápidas */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 16px;
+  border-radius: 16px;
+  background: #fdfcff;
+  border: 1px solid rgba(124, 77, 255, 0.06);
+  color: #512da8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.action-btn mat-icon {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+  color: #7c4dff;
+  transition: transform 0.25s ease;
+}
+
+.action-btn:hover {
+  background: #ffffff;
+  border-color: #7c4dff;
+  box-shadow: 0 8px 20px rgba(124, 77, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+.action-btn:hover mat-icon {
+  transform: scale(1.15) translateY(-2px);
+}
+
+/* ==================== ESTADOS DE CARGA / ERROR ==================== */
+.dashboard-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(124, 77, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(124, 77, 255, 0.02);
+  gap: 20px;
+  color: #7f74a5;
+  text-align: center;
+  margin: 24px;
+}
+
+.dashboard-empty p {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #584c7e;
+  margin: 0;
+}
+
+.error-card {
+  border: 1px solid #ffcdd2 !important;
+  background: #fff8f8 !important;
+}
+
+.error-card mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #d32f2f;
+  margin-bottom: 8px;
+}
+
+.error-actions {
+  margin-top: 12px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .welcome-section {
+    padding: 20px 24px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .scout-brand-badge {
+    text-align: left;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .metric-card-content {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .icon-wrapper mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}

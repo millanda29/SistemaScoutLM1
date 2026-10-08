@@ -1,0 +1,76 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Préstamos</h2>
+    <div class="page-actions">
+      <button *ngIf="auth.hasRole('ADMIN') || auth.hasRole('SUPERINTENDENTE') || auth.hasRole('AUXILIAR')" mat-raised-button color="primary" (click)="openForm()">
+        <mat-icon>add</mat-icon> Nuevo Préstamo
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
+    <ng-container matColumnDef="requestNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Solicitud</mat-header-cell>
+      <mat-cell *matCellDef="let l">{{ l.requestNumber }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="requesterType">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</mat-header-cell>
+      <mat-cell *matCellDef="let l">
+        <span class="status-badge" [class]="l.requesterType === 'INTERNO' ? 'stat-disponible' : 'stat-prestado'">
+          {{ l.requesterType === 'INTERNO' ? 'Interno' : 'Externo' }}
+        </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="reason">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</mat-header-cell>
+      <mat-cell *matCellDef="let l">{{ l.reason }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="loanDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Préstamo</mat-header-cell>
+      <mat-cell *matCellDef="let l">{{ l.loanDate | date }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="expectedReturnDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Devolución</mat-header-cell>
+      <mat-cell *matCellDef="let l">{{ l.expectedReturnDate | date }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+      <mat-cell *matCellDef="let l">
+        <span class="status-badge" [class]="'stat-' + l.status.toLowerCase()">{{ l.status }}</span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="pdfDocumentPath">
+      <mat-header-cell *matHeaderCellDef>Acta PDF</mat-header-cell>
+      <mat-cell *matCellDef="let l">
+        <a *ngIf="l.pdfDocumentPath" [href]="l.pdfDocumentPath" target="_blank" mat-icon-button color="primary" matTooltip="Ver PDF">
+          <mat-icon style="color: #7b1fa2;">picture_as_pdf</mat-icon>
+        </a>
+        <span *ngIf="!l.pdfDocumentPath" style="color:#aaa">—</span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let l">
+        <button *ngIf="l.status === 'SOLICITADO'" mat-icon-button color="primary" matTooltip="Aprobar" (click)="approve(l)">
+          <mat-icon>check_circle</mat-icon>
+        </button>
+        <button *ngIf="l.status === 'SOLICITADO'" mat-icon-button color="warn" matTooltip="Rechazar" (click)="reject(l)">
+          <mat-icon>cancel</mat-icon>
+        </button>
+        <button *ngIf="l.status === 'APROBADO'" mat-icon-button color="primary" matTooltip="Entregar" (click)="deliver(l)">
+          <mat-icon>logout</mat-icon>
+        </button>
+        <button *ngIf="l.status === 'PRESTADO'" mat-icon-button color="primary" matTooltip="Devolver" (click)="returnLoan(l)">
+          <mat-icon>login</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  </div>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>

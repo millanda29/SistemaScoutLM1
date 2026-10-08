@@ -1,0 +1,57 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Bajas</h2>
+    <div class="page-actions">
+      <button mat-raised-button color="primary" (click)="solicitar()">
+        <mat-icon>add</mat-icon> Solicitar Baja
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+  <mat-table [dataSource]="retirements" class="mat-elevation-z1">
+    <ng-container matColumnDef="retirementNumber">
+      <mat-header-cell *matHeaderCellDef>N° Baja</mat-header-cell>
+      <mat-cell *matCellDef="let r">{{ r.retirementNumber }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="resourceCode">
+      <mat-header-cell *matHeaderCellDef>Código</mat-header-cell>
+      <mat-cell *matCellDef="let r">{{ r.resourceCode }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="resourceName">
+      <mat-header-cell *matHeaderCellDef>Recurso</mat-header-cell>
+      <mat-cell *matCellDef="let r">{{ r.resourceName }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="reason">
+      <mat-header-cell *matHeaderCellDef>Motivo</mat-header-cell>
+      <mat-cell *matCellDef="let r">{{ r.reason }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Estado</mat-header-cell>
+      <mat-cell *matCellDef="let r">
+        <span class="status-badge" [class]="'status-' + r.status.toLowerCase()">{{ r.status }}</span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let r">
+        <button *ngIf="r.status === 'SOLICITADO'" mat-icon-button color="primary" matTooltip="Revisar" (click)="review(r)">
+          <mat-icon>rate_review</mat-icon>
+        </button>
+        <button *ngIf="r.status === 'SOLICITADO'" mat-icon-button color="warn" matTooltip="Rechazar" (click)="reject(r)">
+          <mat-icon>cancel</mat-icon>
+        </button>
+        <button *ngIf="r.status === 'REVISADO'" mat-icon-button color="primary" matTooltip="Autorizar" (click)="authorize(r)">
+          <mat-icon>verified</mat-icon>
+        </button>
+        <button *ngIf="r.status === 'AUTORIZADO'" mat-icon-button color="primary" matTooltip="Ejecutar" (click)="execute(r)">
+          <mat-icon>playlist_remove</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  </div>
+</div>

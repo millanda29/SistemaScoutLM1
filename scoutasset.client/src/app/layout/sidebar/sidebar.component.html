@@ -1,0 +1,33 @@
+<div class="sidebar-container">
+  <div class="sidebar-header">
+    <div class="scout-logo">
+      <img src="/logoNacional.jpg" alt="Scouts Ecuador" />
+    </div>
+    <div class="brand-text">
+      <div class="brand-name">Scouts Ecuador</div>
+      <div class="brand-org">Archidona &middot; Napo</div>
+    </div>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <div class="sidebar-nav">
+    <ng-container *ngFor="let item of menuItems">
+      <a
+        class="nav-item"
+        *ngIf="showItem(item.roles)"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        (click)="navigate.emit()"
+      >
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    </ng-container>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="footer-group">G.S. Leonardo Murialdo N.° 1</div>
+    <div class="footer-copy">&copy; 2026 &mdash; Archidona</div>
+  </div>
+</div>

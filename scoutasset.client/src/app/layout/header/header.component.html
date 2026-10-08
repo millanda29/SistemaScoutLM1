@@ -1,0 +1,36 @@
+<mat-toolbar>
+  <div class="flag-overlay"></div>
+  <div class="flag-stars"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
+
+  <button
+    mat-icon-button
+    class="toggle-btn"
+    (click)="sidenav.toggle()"
+    matTooltip="Menú"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <div class="group-logo">
+    <img src="/logoGrupo.jpg" alt="Grupo Scout Leonardo Murialdo" />
+  </div>
+
+  <div class="header-brand">
+    <span class="header-title">Grupo Scout Leonardo Murialdo</span>
+    <span class="header-subtitle">Archidona &middot; Napo &middot; Ecuador</span>
+  </div>
+
+  <span class="spacer"></span>
+
+  <div class="user-section">
+    <span class="user-name">{{ auth.userName() }}</span>
+    <button
+      mat-icon-button
+      class="logout-btn"
+      (click)="logout()"
+      matTooltip="Cerrar sesión"
+    >
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>

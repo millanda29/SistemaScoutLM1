@@ -1,0 +1,79 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Mantenimiento</h2>
+    <div class="page-actions" style="display: flex; gap: 8px;">
+      <button mat-stroked-button color="accent" (click)="autoSchedule()" matTooltip="Generar preventivos automáticamente cada 6 meses">
+        <mat-icon>auto_mode</mat-icon> Auto-Programar Mantenimientos
+      </button>
+      <button mat-raised-button color="primary" (click)="openForm()">
+        <mat-icon>add</mat-icon> Programar Mantenimiento
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <mat-form-field appearance="outline">
+      <mat-label>Filtrar por estado</mat-label>
+      <mat-select [(value)]="statusFilter" (selectionChange)="applyFilter()">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="PROGRAMADO">Programado</mat-option>
+        <mat-option value="EN_PROCESO">En Proceso</mat-option>
+        <mat-option value="COMPLETADO">Completado</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="overdueList.length > 0" class="overdue-section">
+    <mat-card class="overdue-card">
+      <mat-card-title>Mantenimientos Vencidos</mat-card-title>
+      <mat-card-content>
+        <p *ngFor="let m of overdueList">{{ m.resourceCode }} - {{ m.resourceName }} ({{ m.scheduledDate | date }})</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="table-responsive">
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
+    <ng-container matColumnDef="resourceCode">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Recurso</mat-header-cell>
+      <mat-cell *matCellDef="let m">{{ m.resourceCode }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="resourceName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+      <mat-cell *matCellDef="let m">{{ m.resourceName }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="type">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</mat-header-cell>
+      <mat-cell *matCellDef="let m">
+        <span class="status-badge">{{ m.type }}</span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+      <mat-cell *matCellDef="let m">
+        <span class="status-badge" [class]="'stat-' + m.status.toLowerCase()">{{ m.status }}</span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="scheduledDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Programada</mat-header-cell>
+      <mat-cell *matCellDef="let m">{{ m.scheduledDate | date }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let m">
+        <button *ngIf="m.status === 'PROGRAMADO'" mat-icon-button color="primary" matTooltip="Iniciar" (click)="start(m)">
+          <mat-icon>play_arrow</mat-icon>
+        </button>
+        <button *ngIf="m.status === 'EN_PROCESO'" mat-icon-button color="primary" matTooltip="Completar" (click)="complete(m)">
+          <mat-icon>check</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  </div>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>

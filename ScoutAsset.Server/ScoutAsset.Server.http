@@ -1,0 +1,6 @@
+@ScoutAsset.Server_HostAddress = http://localhost:5003
+
+GET {{ScoutAsset.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,31 @@
+services:
+  scout-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scout-asset-app
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+
+  # Opcional: si en el servidor se desea levantar también la base de datos SQL Server
+  # con Docker Compose, basta con descomentar el bloque siguiente:
+  # db:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   container_name: scout-asset-db
+  #   restart: always
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:-YourPassword123!}
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - mssql_data:/var/opt/mssql/data
+
+# volumes:
+#   mssql_data:

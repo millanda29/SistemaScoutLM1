@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
+
+<mat-dialog-content>
+  <div class="form-grid" style="padding-top: 8px;">
+    <mat-form-field appearance="outline">
+      <mat-label>Cédula de Identidad (CI)</mat-label>
+      <input matInput [(ngModel)]="ci" name="ci" required [disabled]="isEdit" placeholder="Ej. 1726543210" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Teléfono / Celular</mat-label>
+      <input matInput [(ngModel)]="telefono" name="telefono" required [disabled]="isEdit" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nombres</mat-label>
+      <input matInput [(ngModel)]="nombres" name="nombres" required [disabled]="isEdit" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Apellidos</mat-label>
+      <input matInput [(ngModel)]="apellidos" name="apellidos" required [disabled]="isEdit" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Usuario (Login)</mat-label>
+      <input matInput [(ngModel)]="userName" name="userName" required [disabled]="isAdmin || isEdit" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Correo electrónico</mat-label>
+      <input matInput type="email" [(ngModel)]="email" name="email" required [disabled]="isAdmin || isEdit" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="grid-span-2">
+      <mat-label>Roles</mat-label>
+      <mat-select [(ngModel)]="selectedRoles" name="roles" multiple [disabled]="isAdmin">
+        <mat-option *ngFor="let role of roles" [value]="role">{{ role }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="saving">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="saving || !userName.trim() || !email.trim() || (!isEdit && (!ci.trim() || !nombres.trim() || !apellidos.trim()))">
+    <mat-spinner *ngIf="saving" diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+    {{ isEdit ? 'Guardar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

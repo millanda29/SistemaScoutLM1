@@ -1,0 +1,46 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Pérdidas</h2>
+  </div>
+
+  <div class="table-responsive">
+  <mat-table [dataSource]="losses" class="mat-elevation-z1">
+    <ng-container matColumnDef="lossNumber">
+      <mat-header-cell *matHeaderCellDef>N° Pérdida</mat-header-cell>
+      <mat-cell *matCellDef="let l">{{ l.lossNumber }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="resourceCode">
+      <mat-header-cell *matHeaderCellDef>Código Recurso</mat-header-cell>
+      <mat-cell *matCellDef="let l">{{ l.resourceCode }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="resourceName">
+      <mat-header-cell *matHeaderCellDef>Recurso</mat-header-cell>
+      <mat-cell *matCellDef="let l">{{ l.resourceName }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Estado</mat-header-cell>
+      <mat-cell *matCellDef="let l">
+        <span class="status-badge" [class]="'stat-' + l.status.toLowerCase()">{{ l.status }}</span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="circumstances">
+      <mat-header-cell *matHeaderCellDef>Circunstancias</mat-header-cell>
+      <mat-cell *matCellDef="let l">{{ l.circumstances }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let l">
+        <button *ngIf="l.status === 'EN_INVESTIGACION'" mat-icon-button color="primary" matTooltip="Confirmar" (click)="confirm(l)">
+          <mat-icon>check_circle</mat-icon>
+        </button>
+        <button *ngIf="l.status === 'CONFIRMADA'" mat-icon-button color="primary" matTooltip="Recuperar" (click)="recover(l)">
+          <mat-icon>restore</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Editar' : 'Nuevo' }} Recurso</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" required />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Categoría</mat-label>
+      <mat-select formControlName="categoryId" required>
+        <mat-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Ubicación</mat-label>
+      <mat-select formControlName="locationId" required>
+        <mat-option *ngFor="let l of locations" [value]="l.id">{{ l.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Custodio Responsable (Dirigente)</mat-label>
+      <mat-select formControlName="currentResponsibleId">
+        <mat-option value="">Sin Custodio Asignado</mat-option>
+        <mat-option *ngFor="let d of dirigentes" [value]="d.id.toString()">
+          {{ d.nombres }} {{ d.apellidos }} (CI: {{ d.ci }})
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Marca</mat-label>
+      <input matInput formControlName="brand" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Modelo</mat-label>
+      <input matInput formControlName="model" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Número de Serie</mat-label>
+      <input matInput formControlName="serialNumber" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo de Adquisición</mat-label>
+      <mat-select formControlName="acquisitionType">
+        <mat-option *ngFor="let t of acquisitionTypes" [value]="t">{{ t }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Costo de Adquisición</mat-label>
+      <input matInput type="number" formControlName="acquisitionCost" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Valor Tasadó</mat-label>
+      <input matInput type="number" formControlName="appraisedValue" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Condición Física</mat-label>
+      <mat-select formControlName="physicalCondition" required>
+        <mat-option *ngFor="let c of physicalConditions" [value]="c">{{ c }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Observaciones</mat-label>
+      <textarea matInput formControlName="observations" rows="3"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="saving">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid || saving">
+    <mat-spinner *ngIf="saving" diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+    Guardar
+  </button>
+</mat-dialog-actions>

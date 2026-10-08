@@ -1,0 +1,260 @@
+<div class="dashboard-container">
+  
+  <!-- Estado de Carga (Spinner) -->
+  <div class="dashboard-empty" *ngIf="!loaded">
+    <mat-spinner diameter="46" strokeWidth="4"></mat-spinner>
+    <p>Cargando datos del panel administrativo...</p>
+  </div>
+
+  <!-- Estado de Error -->
+  <div class="dashboard-empty error-card" *ngIf="loaded && error">
+    <mat-icon>error_outline</mat-icon>
+    <p>No se pudieron recuperar los datos del servidor. Verifica la conexión con la base de datos.</p>
+    <div class="error-actions">
+      <button mat-raised-button color="primary" (click)="fetchData()">Reintentar Conexión</button>
+    </div>
+  </div>
+
+  <!-- Dashboard Contenido Completo -->
+  <ng-container *ngIf="loaded && !error">
+    
+    <!-- Banner Superior Ejecutivo Scout -->
+    <div class="welcome-section" style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #1d0742 0%, #311b92 60%, #4a148c 100%); color: white; padding: 24px 32px; border-radius: 20px; box-shadow: 0 10px 30px rgba(29, 7, 66, 0.25); margin-bottom: 24px; position: relative; overflow: hidden;">
+      <div style="display: flex; align-items: center; gap: 20px; z-index: 2;">
+        <div style="display: flex; gap: 10px; align-items: center; background: #ffffff; padding: 8px 12px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <img src="logoNacional.jpg" alt="Scout Nacional" style="height: 48px; border-radius: 8px; object-fit: contain;" />
+          <span style="font-size: 22px;">⚜️</span>
+          <img src="logoGrupo.jpg" alt="Scout Grupo" style="height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #ffca28;" />
+        </div>
+        <div>
+          <h1 style="margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">¡Bienvenido, {{ auth.userName() || 'Dirigente' }}!</h1>
+          <p style="margin: 4px 0 0; opacity: 0.9; font-size: 0.95rem; font-weight: 500;">Panel inteligente de control patrimonial y trazabilidad de recursos.</p>
+        </div>
+      </div>
+
+      <div style="text-align: right; z-index: 2;">
+        <!-- High Contrast Date Badge -->
+        <div class="welcome-date-badge" style="background: #ffca28; color: #12053d; padding: 8px 16px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 800; box-shadow: 0 4px 14px rgba(0,0,0,0.25);">
+          <mat-icon style="font-size:18px; width:18px; height:18px; color: #12053d;">calendar_today</mat-icon>
+          <span>{{ currentDate | date:'fullDate' }}</span>
+        </div>
+        <div style="font-size: 0.85rem; color: #ffffff; margin-top: 8px; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+          Grupo Scout Leonardo Murialdo N.° 1 — Archidona
+        </div>
+      </div>
+    </div>
+
+    <!-- Valuación Financiera y Métricas Principales -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      <mat-card *ngFor="let m of primaryMetrics" class="metric-card" [style.border-left-color]="m.color">
+        <div class="card-decor-blob" [style.background-color]="m.color"></div>
+        <div class="metric-card-content">
+          <div class="icon-wrapper" [style.background-color]="m.colorLight">
+            <mat-icon [style.color]="m.color">{{ m.icon }}</mat-icon>
+          </div>
+          <div class="text-wrapper">
+            <span class="metric-value">{{ m.value }}</span>
+            <span class="metric-label">{{ m.label }}</span>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Tarjeta Financiera Costo -->
+      <mat-card class="metric-card" style="border-left-color: #2e7d32;">
+        <div class="metric-card-content">
+          <div class="icon-wrapper" style="background-color: rgba(46, 125, 50, 0.1);">
+            <mat-icon style="color: #2e7d32;">attach_money</mat-icon>
+          </div>
+          <div class="text-wrapper">
+            <span class="metric-value" style="color: #2e7d32;">${{ totalAcquisitionCost | number:'1.0-0' }}</span>
+            <span class="metric-label">Costo Invertido</span>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Tarjeta Financiera Avalúo -->
+      <mat-card class="metric-card" style="border-left-color: #7c4dff;">
+        <div class="metric-card-content">
+          <div class="icon-wrapper" style="background-color: rgba(124, 77, 255, 0.1);">
+            <mat-icon style="color: #7c4dff;">account_balance_wallet</mat-icon>
+          </div>
+          <div class="text-wrapper">
+            <span class="metric-value" style="color: #7c4dff;">${{ totalAppraisedValue | number:'1.0-0' }}</span>
+            <span class="metric-label">Valor Comercial Avalúo</span>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Sección de Detalle en dos columnas -->
+    <div class="dashboard-details-row">
+      
+      <!-- Columna Izquierda: Operatividad y Distribución por Categoría -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Tarjeta de Disponibilidad de Recursos -->
+        <mat-card class="info-panel-card">
+          <div class="panel-header">
+            <h3>
+              <mat-icon>donut_large</mat-icon>
+              <span>Operatividad del Inventario</span>
+            </h3>
+          </div>
+          <div class="availability-content">
+            <div class="circular-chart-wrapper">
+              <svg viewBox="0 0 36 36" class="circular-chart">
+                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path 
+                  class="circle" 
+                  [attr.stroke-dasharray]="strokeDashArray"
+                  [attr.stroke]="availabilityPercent > 70 ? '#2e7d32' : availabilityPercent > 40 ? '#f9a825' : '#c62828'"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                />
+              </svg>
+              <div class="percentage-text">
+                <span class="number">{{ availabilityPercent }}%</span>
+                <span class="label">Disponible</span>
+              </div>
+            </div>
+            <div class="availability-info">
+              <p>El <strong>{{ availabilityPercent }}%</strong> del patrimonio scout se encuentra en bodega, auditado y listo para actividades.</p>
+              <p style="font-size: 0.8rem; opacity: 0.85;">El resto corresponde a bienes en préstamos de tropa o mantenimiento preventivo.</p>
+            </div>
+          </div>
+        </mat-card>
+
+        <!-- Tarjeta de Distribución por Categoría (Mejorada e Intuitiva) -->
+        <mat-card class="info-panel-card">
+          <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0;">
+              <mat-icon style="color: #7c4dff;">category</mat-icon>
+              <span>Distribución por Categorías</span>
+            </h3>
+            <span style="font-size: 0.75rem; color: #666; font-weight: 600; background: #f0ecf9; padding: 4px 10px; border-radius: 12px;">
+              🟢 Disponible vs Total
+            </span>
+          </div>
+
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <div *ngFor="let cat of categoryStats" style="background: #faf9fc; padding: 14px 16px; border-radius: 12px; border: 1px solid #eee;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <mat-icon style="color: #512da8; font-size: 20px; width: 20px; height: 20px;">folder</mat-icon>
+                  <span style="font-weight: 700; color: #12053d; font-size: 0.95rem;">{{ cat.category }}</span>
+                </div>
+                <div style="display: flex; gap: 8px; font-size: 0.8rem; font-weight: 700;">
+                  <span style="background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 8px;">
+                    {{ cat.disponibles }} Disponibles
+                  </span>
+                  <span style="background: #ede7f6; color: #512da8; padding: 3px 8px; border-radius: 8px;">
+                    {{ cat.count }} Total
+                  </span>
+                </div>
+              </div>
+
+              <!-- Visual Dual-Color Progress Bar -->
+              <div style="background: #e0e0e0; height: 10px; border-radius: 6px; overflow: hidden; position: relative;">
+                <div 
+                  [style.width.%]="cat.count > 0 ? (cat.disponibles / cat.count) * 100 : 0" 
+                  style="background: linear-gradient(90deg, #2e7d32, #66bb6a); height: 100%; border-radius: 6px; transition: width 0.4s ease;"
+                ></div>
+              </div>
+            </div>
+
+            <div *ngIf="!categoryStats || categoryStats.length === 0" style="text-align: center; color: #888; padding: 16px;">
+              No hay datos de categorías registrados.
+            </div>
+          </div>
+        </mat-card>
+
+      </div>
+
+      <!-- Columna Derecha: Movimientos Recientes & Alertas -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Tarjeta de Alertas Administrativas -->
+        <mat-card class="info-panel-card">
+          <div class="panel-header">
+            <h3>
+              <mat-icon>notifications_none</mat-icon>
+              <span>Novedades y Atenciones</span>
+            </h3>
+          </div>
+          <div class="novedades-list">
+            <div *ngFor="let a of alerts" class="novedad-item">
+              <div class="novedad-status-dot" [style.background-color]="a.color" [style.box-shadow]="'0 0 10px ' + a.color"></div>
+              <div class="novedad-details">
+                <span class="novedad-title">{{ a.label }}</span>
+                <span class="novedad-desc">Bienes que requieren revisión o seguimiento</span>
+              </div>
+              <div class="novedad-count-badge" [style.color]="a.color" [style.background]="a.colorLight">
+                {{ a.value }}
+              </div>
+            </div>
+          </div>
+        </mat-card>
+
+        <!-- Tarjeta de Actividad Reciente (Bitácora) -->
+        <mat-card class="info-panel-card" *ngIf="recentMovements && recentMovements.length > 0">
+          <div class="panel-header">
+            <h3>
+              <mat-icon>history</mat-icon>
+              <span>Últimos Movimientos</span>
+            </h3>
+          </div>
+          <div style="padding: 12px 16px; display: flex; flex-direction: column; gap: 12px;">
+            <div *ngFor="let m of recentMovements" style="display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+              <div style="background: rgba(124, 77, 255, 0.1); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <mat-icon style="color: #7c4dff; font-size: 20px; width: 20px; height: 20px;">autorenew</mat-icon>
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: #12053d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ m.resourceCode }} - {{ m.resourceName }}
+                </div>
+                <div style="font-size: 0.75rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ m.description }}
+                </div>
+              </div>
+              <span style="font-size: 0.7rem; color: #888; font-weight: 500; white-space: nowrap;">{{ m.performedAt | date:'dd/MM HH:mm' }}</span>
+            </div>
+          </div>
+        </mat-card>
+
+      </div>
+
+    </div>
+
+    <!-- Tarjeta de Acciones Rápidas (Role-based shortcuts) -->
+    <mat-card class="info-panel-card" style="margin-top: 24px;">
+      <div class="panel-header">
+        <h3>
+          <mat-icon>bolt</mat-icon>
+          <span>Accesos Rápidos</span>
+        </h3>
+      </div>
+      <div class="quick-actions-grid">
+        <a routerLink="/resources" class="action-btn">
+          <mat-icon>add_circle_outline</mat-icon>
+          <span>Catálogo de Recursos</span>
+        </a>
+        <a routerLink="/loans" class="action-btn">
+          <mat-icon>swap_horiz</mat-icon>
+          <span>Préstamos</span>
+        </a>
+        <a routerLink="/maintenance" class="action-btn">
+          <mat-icon>build</mat-icon>
+          <span>Mantenimiento</span>
+        </a>
+        <a routerLink="/dirigentes" class="action-btn">
+          <mat-icon>badge</mat-icon>
+          <span>Dirigentes</span>
+        </a>
+        <a routerLink="/reports" class="action-btn">
+          <mat-icon>assessment</mat-icon>
+          <span>Reportes</span>
+        </a>
+      </div>
+    </mat-card>
+
+  </ng-container>
+</div>

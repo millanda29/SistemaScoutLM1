@@ -1,0 +1,127 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Inventario Físico</h2>
+    <div class="page-actions">
+      <button mat-raised-button color="primary" (click)="create()">
+        <mat-icon>add</mat-icon> Nuevo Inventario
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="inventories.length === 0" class="empty-state" style="background: #fff; border-radius: 16px; border: 1px solid #eae6f3;">
+    <mat-icon>assignment_outlined</mat-icon>
+    <p>No se han registrado procesos de inventario físico</p>
+  </div>
+
+  <mat-accordion multi="true">
+    <mat-expansion-panel *ngFor="let inv of inventories" style="margin-bottom: 12px; border-radius: 12px !important; border: 1px solid #eae6f3; overflow: hidden;">
+      <mat-expansion-panel-header style="padding: 16px 24px;">
+        <mat-panel-title style="font-weight: 700; color: #12053d; display: flex; align-items: center; gap: 12px;">
+          <mat-icon style="color: #7c4dff;">assignment</mat-icon>
+          {{ inv.inventoryNumber }}
+        </mat-panel-title>
+        <mat-panel-description style="display: flex; align-items: center; justify-content: flex-end; gap: 16px;">
+          <span class="status-badge" [class]="getStatusClass(inv.status)">
+            {{ getStatusLabel(inv.status) }}
+          </span>
+          <span style="font-size: 0.85rem; color: #666;">
+            {{ inv.startDate | date:'dd/MM/yyyy' }}
+            <span *ngIf="inv.endDate"> - {{ inv.endDate | date:'dd/MM/yyyy' }}</span>
+          </span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="padding: 12px 8px;">
+        <p style="margin-bottom: 12px; font-size: 0.95rem;">
+          <strong>Descripción:</strong> {{ inv.description || 'Sin descripción' }}
+        </p>
+
+        <!-- Assigned Locations -->
+        <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <strong style="font-size: 0.85rem; color: #555;">Ubicaciones en auditoría:</strong>
+          <span *ngFor="let loc of inv.locations" class="status-badge" style="background: #f0f4f8; color: #334e68; border: 1px solid #d9e2ec;">
+            <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">location_on</mat-icon>
+            {{ loc.locationName || 'Ubicación #' + loc.locationId }}
+          </span>
+          <span *ngIf="!inv.locations || inv.locations.length === 0" style="color: #999; font-size: 0.85rem;">Todas</span>
+        </div>
+
+        <!-- Items Summary / Table -->
+        <div style="margin-top: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: #2c1e4d;">
+              Ítems Auditados ({{ inv.items ? inv.items.length : 0 }})
+            </h3>
+            
+            <button *ngIf="inv.status === 'EN_CURSO'" mat-stroked-button color="primary" (click)="registerItem(inv)" [disabled]="processingId === inv.id">
+              <mat-icon>add_circle_outline</mat-icon> Registrar Ítem / Hallazgo
+            </button>
+          </div>
+
+          <div *ngIf="inv.items && inv.items.length > 0" class="table-responsive">
+            <table mat-table [dataSource]="inv.items" class="mat-elevation-z1">
+              <ng-container matColumnDef="resourceId">
+                <th mat-header-cell *matHeaderCellDef>Recurso / Código</th>
+                <td mat-cell *matCellDef="let item">
+                  <strong>{{ item.foundCode || ('ID: ' + item.resourceId) }}</strong>
+                  <span *ngIf="item.foundName" style="display: block; font-size: 0.8rem; color: #666;">{{ item.foundName }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="result">
+                <th mat-header-cell *matHeaderCellDef>Resultado Conteo</th>
+                <td mat-cell *matCellDef="let item">
+                  <span class="status-badge" [class]="item.result === 'COINCIDIENTE' ? 'stat-disponible' : (item.result === 'SOBRANTE' ? 'stat-mantenimiento' : 'stat-no_localizado')">
+                    {{ item.result }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="physicalCondition">
+                <th mat-header-cell *matHeaderCellDef>Condición Física</th>
+                <td mat-cell *matCellDef="let item">
+                  <span class="status-badge" [class]="item.physicalCondition === 'BUENO' ? 'cond-bueno' : (item.physicalCondition === 'REGULAR' ? 'cond-regular' : 'cond-daniado')">
+                    {{ item.physicalCondition || '—' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="observations">
+                <th mat-header-cell *matHeaderCellDef>Observaciones</th>
+                <td mat-cell *matCellDef="let item">{{ item.observations || '—' }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="['resourceId', 'result', 'physicalCondition', 'observations']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['resourceId', 'result', 'physicalCondition', 'observations'];"></tr>
+            </table>
+          </div>
+
+          <div *ngIf="!inv.items || inv.items.length === 0" style="padding: 24px; text-align: center; background: #fafafa; border-radius: 8px; color: #888;">
+            No se han registrado ítems contados en este inventario aún.
+          </div>
+        </div>
+      </div>
+
+      <mat-action-row style="padding: 12px 24px; gap: 8px; justify-content: flex-end;">
+        <button *ngIf="inv.status === 'PLANIFICADA'" mat-raised-button color="primary" (click)="start(inv)" [disabled]="processingId === inv.id">
+          <mat-spinner *ngIf="processingId === inv.id" diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+          <mat-icon *ngIf="processingId !== inv.id">play_arrow</mat-icon> Iniciar Conteo
+        </button>
+
+        <button *ngIf="inv.status === 'EN_CURSO'" mat-raised-button color="primary" (click)="finish(inv)" [disabled]="processingId === inv.id">
+          <mat-spinner *ngIf="processingId === inv.id" diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+          <mat-icon *ngIf="processingId !== inv.id">check</mat-icon> Finalizar Conteo
+        </button>
+
+        <button *ngIf="inv.status === 'FINALIZADA'" mat-raised-button color="primary" (click)="reconcile(inv)" [disabled]="processingId === inv.id">
+          <mat-spinner *ngIf="processingId === inv.id" diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+          <mat-icon *ngIf="processingId !== inv.id">analytics</mat-icon> Ejecutar Conciliación
+        </button>
+
+        <span *ngIf="inv.status === 'CONCILIADA'" style="color: #2e7d32; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 4px;">
+          <mat-icon>verified</mat-icon> Conciliación Completada
+        </span>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

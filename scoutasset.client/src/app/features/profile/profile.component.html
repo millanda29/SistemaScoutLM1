@@ -1,0 +1,143 @@
+<div class="page-container">
+  <div class="page-header" style="margin-bottom: 24px;">
+    <h2>Perfil de Usuario</h2>
+  </div>
+
+  <div *ngIf="loading" style="text-align: center; padding: 60px 0;">
+    <mat-spinner diameter="46" style="margin: 0 auto 16px;"></mat-spinner>
+    <p style="color: #666;">Cargando perfil...</p>
+  </div>
+
+  <div *ngIf="!loading" style="display: grid; grid-template-columns: 320px 1fr; gap: 24px;">
+    <!-- Profile Card Summary (Left Panel) -->
+    <mat-card style="padding: 24px; text-align: center; border-radius: 16px; border: 1px solid #e0e0e0; box-shadow: 0 4px 18px rgba(0,0,0,0.03);">
+      <div style="width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, #1d0742, #7c4dff); color: white; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 800; margin: 0 auto 16px; box-shadow: 0 6px 20px rgba(124, 77, 255, 0.3);">
+        {{ (profile.nombres ? profile.nombres.charAt(0) : profile.userName.charAt(0)) | uppercase }}
+      </div>
+
+      <h3 style="margin: 0 0 4px; font-size: 1.3rem; font-weight: 800; color: #12053d;">
+        {{ profile.nombres && profile.apellidos ? profile.nombres + ' ' + profile.apellidos : profile.userName }}
+      </h3>
+      <p style="margin: 0 0 12px; color: #666; font-size: 0.85rem;">@{{ profile.userName }}</p>
+
+      <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+        <span *ngFor="let role of profile.roles" class="status-badge" [class]="'role-' + role.toLowerCase()">
+          {{ role }}
+        </span>
+      </div>
+
+      <div style="text-align: left; background: #faf9fc; padding: 16px; border-radius: 12px; font-size: 0.85rem; border: 1px solid #eee;">
+        <div style="margin-bottom: 8px;">
+          <strong style="color: #666; display: block; font-size: 0.75rem; text-transform: uppercase;">Correo Electrónico:</strong>
+          <span style="color: #12053d; font-weight: 600;">{{ profile.email }}</span>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <strong style="color: #666; display: block; font-size: 0.75rem; text-transform: uppercase;">Cédula (CI):</strong>
+          <span style="color: #12053d; font-weight: 600;">{{ profile.ci || 'Sin registrar' }}</span>
+        </div>
+        <div>
+          <strong style="color: #666; display: block; font-size: 0.75rem; text-transform: uppercase;">Teléfono:</strong>
+          <span style="color: #12053d; font-weight: 600;">{{ profile.telefono || 'Sin registrar' }}</span>
+        </div>
+      </div>
+    </mat-card>
+
+    <!-- Profile Details & Password Form (Right Panel) -->
+    <mat-tab-group class="mat-elevation-z1" style="background: #fff; border-radius: 16px; overflow: hidden; padding: 8px; border: 1px solid #e0e0e0;">
+      
+      <!-- TAB 1: Datos Personales -->
+      <mat-tab label="Información Personal">
+        <div style="padding: 24px;">
+          <h3 style="margin-top: 0; color: #12053d; font-size: 1.1rem; font-weight: 700;">Editar Datos Personales</h3>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <mat-form-field appearance="outline">
+              <mat-label>Nombres</mat-label>
+              <input matInput [(ngModel)]="profile.nombres" placeholder="Tus nombres" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Apellidos</mat-label>
+              <input matInput [(ngModel)]="profile.apellidos" placeholder="Tus apellidos" required />
+            </mat-form-field>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <mat-form-field appearance="outline">
+              <mat-label>Cédula de Identidad (CI)</mat-label>
+              <input matInput [(ngModel)]="profile.ci" placeholder="1723456789" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Teléfono de Contacto</mat-label>
+              <input matInput [(ngModel)]="profile.telefono" placeholder="0991234567" />
+            </mat-form-field>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+            <mat-form-field appearance="outline">
+              <mat-label>Usuario de Sistema</mat-label>
+              <input matInput [value]="profile.userName" disabled />
+              <mat-hint>No modificable</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Correo Electrónico</mat-label>
+              <input matInput [value]="profile.email" disabled />
+              <mat-hint>No modificable</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <button mat-raised-button color="primary" (click)="updateProfile()" [disabled]="savingProfile">
+            <mat-spinner *ngIf="savingProfile" diameter="18" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+            Guardar Cambios del Perfil
+          </button>
+        </div>
+      </mat-tab>
+
+      <!-- TAB 2: Cambio de Contraseña -->
+      <mat-tab label="Seguridad y Contraseña">
+        <div style="padding: 24px; max-width: 500px;">
+          <h3 style="margin-top: 0; color: #12053d; font-size: 1.1rem; font-weight: 700;">Cambiar Contraseña de Acceso</h3>
+          <p style="color: #666; font-size: 0.88rem; margin-bottom: 24px;">
+            Ingresa tu contraseña actual y define una nueva clave personal.
+          </p>
+
+          <form (ngSubmit)="changePassword()" style="display: flex; flex-direction: column; gap: 16px;">
+            <mat-form-field appearance="outline">
+              <mat-label>Contraseña Actual</mat-label>
+              <mat-icon matPrefix>vpn_key</mat-icon>
+              <input matInput [(ngModel)]="currentPassword" name="currentPassword" [type]="hideCurrent ? 'password' : 'text'" placeholder="••••••••" required />
+              <button type="button" mat-icon-button matSuffix (click)="hideCurrent = !hideCurrent">
+                <mat-icon>{{ hideCurrent ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Nueva Contraseña</mat-label>
+              <mat-icon matPrefix>lock_outline</mat-icon>
+              <input matInput [(ngModel)]="newPassword" name="newPassword" [type]="hideNew ? 'password' : 'text'" placeholder="Mínimo 6 caracteres" required />
+              <button type="button" mat-icon-button matSuffix (click)="hideNew = !hideNew">
+                <mat-icon>{{ hideNew ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Confirmar Nueva Contraseña</mat-label>
+              <mat-icon matPrefix>lock</mat-icon>
+              <input matInput [(ngModel)]="confirmPassword" name="confirmPassword" [type]="hideConfirm ? 'password' : 'text'" placeholder="Repite tu nueva contraseña" required />
+              <button type="button" mat-icon-button matSuffix (click)="hideConfirm = !hideConfirm">
+                <mat-icon>{{ hideConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" type="submit" [disabled]="savingPassword || !currentPassword || !newPassword || !confirmPassword" style="margin-top: 8px;">
+              <mat-spinner *ngIf="savingPassword" diameter="18" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+              Actualizar Mi Contraseña
+            </button>
+          </form>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

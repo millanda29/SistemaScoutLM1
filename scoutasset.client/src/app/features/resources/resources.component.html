@@ -1,0 +1,97 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Recursos</h2>
+    <div class="page-actions" style="display: flex; gap: 8px;">
+      <button mat-stroked-button color="primary" (click)="openImportDialog()">
+        <mat-icon>upload_file</mat-icon> Carga Masiva (Excel)
+      </button>
+      <button mat-raised-button color="primary" (click)="openForm()">
+        <mat-icon>add</mat-icon> Nuevo Recurso
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <mat-form-field appearance="outline">
+      <mat-label>Buscar</mat-label>
+      <input matInput [(ngModel)]="search" (input)="applyFilter()" placeholder="Código o nombre" />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Categoría</mat-label>
+      <mat-select [(value)]="selectedCategory" (selectionChange)="applyFilter()">
+        <mat-option value="">Todas</mat-option>
+        <mat-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Estado Administrativo</mat-label>
+      <mat-select [(value)]="selectedStatus" (selectionChange)="applyFilter()">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="DISPONIBLE">Disponible</mat-option>
+        <mat-option value="PRESTADO">Prestado</mat-option>
+        <mat-option value="EN_MANTENIMIENTO">En Mantenimiento</mat-option>
+        <mat-option value="PERDIDO">Perdido</mat-option>
+        <mat-option value="DADO_DE_BAJA">Dado de Baja</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="table-responsive">
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
+    <ng-container matColumnDef="code">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Código</mat-header-cell>
+      <mat-cell *matCellDef="let r">{{ r.code }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+      <mat-cell *matCellDef="let r">{{ r.name }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="category">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</mat-header-cell>
+      <mat-cell *matCellDef="let r">{{ r.category || '' }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="location">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Ubicación</mat-header-cell>
+      <mat-cell *matCellDef="let r">{{ r.location || '' }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="responsible">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Custodio Responsable</mat-header-cell>
+      <mat-cell *matCellDef="let r">
+        <span style="font-weight: 600; color: #512da8;">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;">person</mat-icon>
+          {{ r.responsibleName }}
+        </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="physicalCondition">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Condición Física</mat-header-cell>
+      <mat-cell *matCellDef="let r">
+        <span class="status-badge" [class]="'cond-' + r.physicalCondition.toLowerCase()">{{ r.physicalCondition }}</span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="administrativeStatus">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Estado Admin.</mat-header-cell>
+      <mat-cell *matCellDef="let r">
+        <span class="status-badge" [class]="'stat-' + r.administrativeStatus.toLowerCase()">{{ r.administrativeStatus }}</span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let r">
+        <button mat-icon-button color="primary" matTooltip="Editar" (click)="openForm(r)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="delete(r.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  </div>
+
+  <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" pageSize="10" showFirstLastButtons></mat-paginator>
+</div>

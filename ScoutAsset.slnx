@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="scoutasset.client/scoutasset.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="ScoutAsset.Server/ScoutAsset.Server.csproj" />
+</Solution>

@@ -1,0 +1,65 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Ubicaciones</h2>
+    <div class="page-actions" style="display: flex; gap: 8px;">
+      <button mat-stroked-button color="primary" (click)="openImportDialog()">
+        <mat-icon>upload_file</mat-icon> Carga Masiva (Excel)
+      </button>
+      <button mat-raised-button color="primary" (click)="create()">
+        <mat-icon>add</mat-icon> Nueva Ubicación
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+      <mat-cell *matCellDef="let loc">
+        <ng-container *ngIf="editingId === loc.id; else nameDisplay">
+          <mat-form-field appearance="outline">
+            <input matInput [(ngModel)]="editName" />
+          </mat-form-field>
+        </ng-container>
+        <ng-template #nameDisplay>{{ loc.name }}</ng-template>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</mat-header-cell>
+      <mat-cell *matCellDef="let loc">
+        <ng-container *ngIf="editingId === loc.id; else descDisplay">
+          <mat-form-field appearance="outline">
+            <input matInput [(ngModel)]="editDescription" />
+          </mat-form-field>
+        </ng-container>
+        <ng-template #descDisplay>{{ loc.description || '-' }}</ng-template>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let loc">
+        <ng-container *ngIf="editingId === loc.id; else actionBtns">
+          <button mat-icon-button color="primary" matTooltip="Guardar" (click)="saveEdit(loc)">
+            <mat-icon>check</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Cancelar" (click)="cancelEdit()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </ng-container>
+        <ng-template #actionBtns>
+          <button mat-icon-button color="primary" matTooltip="Editar" (click)="startEdit(loc)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="delete(loc.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  </div>
+  <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" pageSize="10" showFirstLastButtons></mat-paginator>
+</div>

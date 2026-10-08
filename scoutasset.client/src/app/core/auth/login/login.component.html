@@ -1,0 +1,138 @@
+<div class="login-page">
+  <!-- Mesh background overlay -->
+  <div class="page-bg-pattern"></div>
+  <div class="bg-mesh-glow"></div>
+
+  <!-- Left panel (Brand) -->
+  <div class="login-brand">
+    <div class="brand-bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+      <div class="shape shape-5"></div>
+    </div>
+
+    <div class="brand-content">
+      <div class="brand-logo-wrapper">
+        <img src="logoNacional.jpg" alt="Logo institucional" class="brand-logo" />
+        <div class="logo-glow"></div>
+      </div>
+      <h1 class="brand-title">ScoutAsset</h1>
+      <div class="brand-subtitle-badge">GESTIÓN INTELIGENTE</div>
+      <p class="brand-description">
+        Sistema de control y trazabilidad de recursos para el Grupo Scout Leonardo Murialdo N.° 1.
+      </p>
+    </div>
+
+    <div class="brand-footer">
+      <span>Archidona - Ecuador</span>
+    </div>
+  </div>
+
+  <!-- Right panel (Form) -->
+  <div class="login-form-section">
+    <!-- Glowing decorative orbs in the background -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+
+    <mat-card class="login-card">
+      <div class="card-header">
+        <div class="card-logo-container">
+          <img src="logoGrupo.jpg" alt="Grupo Scout" class="card-logo" />
+        </div>
+        <h2 class="card-title">Bienvenido</h2>
+        <p class="card-subtitle">
+          Ingresa tus credenciales para acceder a la plataforma
+        </p>
+      </div>
+
+      <div *ngIf="error" class="form-error">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+
+      <form (ngSubmit)="login()" class="login-form" #loginForm="ngForm">
+        <!-- Input Correo -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Correo electrónico</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
+          <input
+            matInput
+            [(ngModel)]="email"
+            name="email"
+            type="email"
+            placeholder="correo@ejemplo.com"
+            autocomplete="username"
+            required
+            #emailModel="ngModel"
+          />
+          <mat-error>
+            <ng-container *ngIf="emailModel.hasError('required')">
+              El correo electrónico es obligatorio
+            </ng-container>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Input Contraseña -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Contraseña</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input
+            matInput
+            [(ngModel)]="password"
+            name="password"
+            [type]="hidePassword ? 'password' : 'text'"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+            #passwordModel="ngModel"
+          />
+          <button
+            type="button"
+            mat-icon-button
+            matSuffix
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+            class="password-toggle"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error>
+            <ng-container *ngIf="passwordModel.hasError('required')">
+              La contraseña es obligatoria
+            </ng-container>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Opciones adicionales -->
+        <div class="form-options">
+          <a href="#" class="forgot-link" (click)="$event.preventDefault(); forgotPassword()">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+
+        <!-- Botón ingresar -->
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="login-btn"
+          [disabled]="loading"
+        >
+          <mat-spinner
+            *ngIf="loading"
+            diameter="22"
+            class="btn-spinner"
+          ></mat-spinner>
+          <span [class.btn-text-hidden]="loading">Iniciar Sesión</span>
+        </button>
+      </form>
+
+      <div class="card-footer">
+        <span>© 2026 Oficina Scout Leonardo Murialdo N.° 1</span>
+      </div>
+    </mat-card>
+  </div>
+</div>

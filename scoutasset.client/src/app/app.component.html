@@ -1,0 +1,21 @@
+<ng-container *ngIf="auth.isAuthenticated(); else loginPage">
+  <mat-sidenav-container autosize>
+    <mat-sidenav
+      #sidenav
+      [mode]="isMobile ? 'over' : 'side'"
+      [opened]="!isMobile"
+    >
+      <app-sidebar (navigate)="onNavigate(sidenav)"></app-sidebar>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <app-header [sidenav]="sidenav"></app-header>
+      <main class="main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</ng-container>
+
+<ng-template #loginPage>
+  <router-outlet></router-outlet>
+</ng-template>

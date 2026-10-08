@@ -1,0 +1,86 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Usuarios</h2>
+    <div class="page-actions" style="display: flex; gap: 8px;">
+      <button mat-stroked-button color="primary" (click)="openImportDialog()">
+        <mat-icon>upload_file</mat-icon> Carga Masiva (Excel)
+      </button>
+      <button mat-raised-button color="primary" (click)="openForm()">
+        <mat-icon>add</mat-icon> Nuevo Usuario
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
+      <ng-container matColumnDef="ci">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Cédula (CI)</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.ci || '—' }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="fullName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Completo</mat-header-cell>
+        <mat-cell *matCellDef="let user">
+          {{ user.apellidos && user.nombres ? user.apellidos + ', ' + user.nombres : '—' }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="userName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.userName }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Correo</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.email }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="roles">
+        <mat-header-cell *matHeaderCellDef>Roles</mat-header-cell>
+        <mat-cell *matCellDef="let user">
+          <span *ngFor="let role of user.roles; let i = index">
+            <span class="status-badge" [class]="'role-' + role.toLowerCase()">{{ role }}</span>
+            <span *ngIf="i < user.roles.length - 1"> </span>
+          </span>
+          <span *ngIf="user.roles.length === 0" style="color: #bbb;">—</span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+        <mat-cell *matCellDef="let user">
+          <button
+            mat-icon-button
+            color="primary"
+            matTooltip="Editar"
+            (click)="openForm(user)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="warn"
+            matTooltip="Eliminar"
+            (click)="delete(user)"
+            [disabled]="user.userName === 'admin'"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+      <tr class="mat-row" *matNoData>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <div class="empty-state">
+            <mat-icon>people_outline</mat-icon>
+            <p>No hay usuarios registrados</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" pageSize="10" showFirstLastButtons></mat-paginator>
+</div>

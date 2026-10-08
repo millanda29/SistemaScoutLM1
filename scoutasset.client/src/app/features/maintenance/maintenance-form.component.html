@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Programar Mantenimiento</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-grid">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Recurso</mat-label>
+      <mat-select formControlName="resourceId" required>
+        <mat-option *ngFor="let r of resources" [value]="r.id">{{ r.code }} - {{ r.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo</mat-label>
+      <mat-select formControlName="type" required>
+        <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="description" rows="3" required></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha Programada</mat-label>
+      <input matInput [matDatepicker]="dp" formControlName="scheduledDate" required />
+      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker #dp></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Responsable</mat-label>
+      <input matInput formControlName="responsible" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="saving">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid || saving">
+    <mat-spinner *ngIf="saving" diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+    Guardar
+  </button>
+</mat-dialog-actions>

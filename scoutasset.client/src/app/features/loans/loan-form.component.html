@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>Nuevo Préstamo</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-grid" style="padding-top: 8px;">
+    <mat-form-field appearance="outline" class="grid-span-2">
+      <mat-label>Recursos Disponibles</mat-label>
+      <mat-select formControlName="resourceIds" multiple required>
+        <mat-option *ngFor="let r of resources" [value]="r.id">
+          {{ r.code }} - {{ r.name }} ({{ r.physicalCondition }})
+        </mat-option>
+      </mat-select>
+      <mat-hint>Solo se muestran bienes en estado DISPONIBLE y condición Operativa (Bueno/Regular).</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="grid-span-2">
+      <mat-label>Tipo de Solicitante</mat-label>
+      <mat-select formControlName="requesterType" required>
+        <mat-option value="INTERNO">Interno (Miembro del Grupo)</mat-option>
+        <mat-option value="EXTERNO">Externo (Fuera del Grupo)</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="grid-span-2">
+      <mat-label>Motivo del Préstamo</mat-label>
+      <textarea matInput formControlName="reason" rows="3" required></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha de Préstamo (Salida)</mat-label>
+      <input matInput [matDatepicker]="dpLoan" formControlName="loanDate" required />
+      <mat-datepicker-toggle matSuffix [for]="dpLoan"></mat-datepicker-toggle>
+      <mat-datepicker #dpLoan></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha de Devolución Esperada</mat-label>
+      <input matInput [matDatepicker]="dpReturn" formControlName="expectedReturnDate" required />
+      <mat-datepicker-toggle matSuffix [for]="dpReturn"></mat-datepicker-toggle>
+      <mat-datepicker #dpReturn></mat-datepicker>
+    </mat-form-field>
+
+    <!-- PDF Document Upload -->
+    <div class="grid-span-2" style="margin: 15px 0; border: 1px dashed #ccc; padding: 12px; border-radius: 8px; background: #fafafa;">
+      <label style="display: block; font-weight: 500; margin-bottom: 8px; color: #555;">Acta de Compromiso o Documento de Respaldo (PDF Opcional)</label>
+      <input type="file" (change)="onFileSelected($event)" accept="application/pdf" />
+      <div *ngIf="uploadingPdf" style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+        <mat-spinner diameter="18"></mat-spinner>
+        <span style="font-size: 13px; color: #666;">Subiendo archivo...</span>
+      </div>
+      <span *ngIf="pdfPath" style="color: #2e7d32; font-size: 13px; display: block; margin-top: 8px; font-weight: 500;">
+        ✔ Documento cargado exitosamente
+      </span>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="saving || uploadingPdf">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid || saving || uploadingPdf">
+    <mat-spinner *ngIf="saving" diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+    Guardar
+  </button>
+</mat-dialog-actions>
