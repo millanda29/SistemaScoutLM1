@@ -1,0 +1,20 @@
+services:
+  scout-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scout-asset-app
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+    networks:
+      - infra
+
+networks:
+  infra:
+    external: true
