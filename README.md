@@ -165,25 +165,43 @@ La aplicación estará disponible inmediatamente en el puerto `8080`:
 
 ---
 
-## 🔄 8. Automatización de Actualizaciones (`update.sh`)
+## 🔀 8. Flujo de Trabajo y Política de Pull Requests (PRs)
 
-Para actualizar el servidor a la última versión disponible, sincronizar cambios entre `develop` y `main`, y reconstruir el contenedor automáticamente, ejecuta:
+> ⚠️ **Regla de Oro**: Ningún cambio se sube directamente a `main`. Todo código nuevo, corrección o funcionalidad debe pasar obligatoriamente por un **Pull Request (PR)** con revisión previa.
 
-```bash
-./update.sh
+### Estrategia de Ramas:
+1. **`feature/nombre-tarea` o `fix/nombre-bug`**: Ramas de trabajo creadas a partir de `develop`.
+2. **`develop`**: Rama de integración continua y pruebas (staging/QA). Los desarrolladores abren un PR hacia `develop`.
+3. **`main`**: Rama protegida de producción. Solo recibe cambios mediante PR aprobado desde `develop`.
+
+```text
+[feature/mi-funcionalidad] ──(PR)──> [develop] ──(PR)──> [main] (Producción)
 ```
-
-El script ejecuta automáticamente el siguiente flujo:
-1. Verifica que no haya cambios locales pendientes.
-2. Descarga los últimos cambios del remoto (`git fetch origin`).
-3. Actualiza la rama `develop` (`git pull origin develop`).
-4. Sincroniza la rama `main` y fusiona `develop` en `main`.
-5. Sube los cambios consolidados a `origin/main`.
-6. Reconstruye y reinicia el contenedor con `docker compose up -d --build`.
 
 ---
 
-## 💻 9. Ejecución en Entorno Local de Desarrollo
+## 🔄 9. Automatización de Actualizaciones en Servidor (`update.sh`)
+
+Una vez que un Pull Request ha sido revisado y fusionado en GitHub hacia la rama correspondiente, puedes actualizar el servidor y redesplegar los contenedores ejecutando:
+
+```bash
+# Desplegar la rama actual (o main por defecto en producción):
+./update.sh
+
+# O desplegar una rama específica (por ejemplo, para pruebas en develop):
+./update.sh develop
+```
+
+El script ejecuta automáticamente el siguiente flujo seguro:
+1. Verifica que no haya modificaciones locales sin commitear.
+2. Descarga las referencias del repositorio (`git fetch origin`).
+3. Sincroniza la rama destino con el código aprobado (`git pull origin <rama>`).
+4. Valida la existencia de `.env` y de la red Docker `infra`.
+5. Reconstruye y levanta los servicios en segundo plano con `docker compose up -d --build`.
+
+---
+
+## 💻 10. Ejecución en Entorno Local de Desarrollo
 
 Si deseas trabajar en desarrollo local sin Docker:
 
@@ -211,7 +229,7 @@ npm start
 
 ---
 
-## 🌱 10. Datos Semilla Iniciales (Seed Data)
+## 🌱 11. Datos Semilla Iniciales (Seed Data)
 
 Al iniciar la aplicación por primera vez, el sistema inicializa automáticamente:
 
