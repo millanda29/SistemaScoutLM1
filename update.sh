@@ -64,6 +64,7 @@ if command -v docker >/dev/null 2>&1; then
 
     # 5. Reconstruir e iniciar servicios
     echo "🐳 [4/4] Reconstruyendo y levantando servicios con compose.yaml..."
+    $DOCKER_CMD compose down
     $DOCKER_CMD compose up -d --build
     echo "✅ Servicios desplegados y actualizados correctamente."
 else

@@ -17,4 +17,5 @@ services:
 
 networks:
   infra:
+    name: infra
     external: true
